@@ -12,6 +12,7 @@ Usage:
 3) Modify your function in function.h
 4) Make sure all variables match in handleTest.h
 5) Write your tests in executeTests.h
+6) Open main.cpp and press run in VSCode or compile the main.cpp
 -------------------------
 - author - Timur Uzakov
 -------------------------
