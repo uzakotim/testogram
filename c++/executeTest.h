@@ -7,4 +7,3 @@ void execute_tests()
     handleTest(1,1, "1");    
 }
 /* ----------------------------------------------------- */
-//Copyright Timur Uzakov(c) - 2022

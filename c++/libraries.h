@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <math.h>
 /*----------------------------------------------------------*/
-//Copyright Timur Uzakov(c) - 2022
 
 
 

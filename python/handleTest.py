@@ -13,4 +13,3 @@ def handleTest(test_number, input, check):
         error = False
     return error
 # *----------------------------------------------------------*
-# Copyright Timur Uzakov(c) - 2022

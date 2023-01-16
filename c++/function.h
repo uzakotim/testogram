@@ -12,4 +12,3 @@ std::string findFizzBuzz(int value)
     return std::to_string(value);
 }
 /* ----------------------------------------------------- */
-//Copyright Timur Uzakov(c) - 2022

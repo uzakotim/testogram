@@ -10,4 +10,3 @@ int main(void)
     if (err == false) std::cout<<"All tests are passed\n";
 }
 /*----------------------------------------------------------*/
-//Copyright Timur Uzakov(c) - 2022

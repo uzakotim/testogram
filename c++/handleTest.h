@@ -18,4 +18,3 @@ void handleTest(int test_number, int input, std::string check)
         std::cout<<"✅ : PASSED\n";
 }
 /*----------------------------------------------------------*/
-//Copyright Timur Uzakov(c) - 2022

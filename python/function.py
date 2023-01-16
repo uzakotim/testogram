@@ -10,4 +10,3 @@ def functionName(value):
         return "Fizz"
     return str(value)
 #* ----------------------------------------------------- *
-# Copyright Timur Uzakov(c) - 2022
