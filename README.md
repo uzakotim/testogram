@@ -1,7 +1,7 @@
 # TESTOGRAM
 -------------------------
 
-Tool for test-driven development in C++
+Tool for test-driven development in C++ and Python
 
 
 Version 1.0 
