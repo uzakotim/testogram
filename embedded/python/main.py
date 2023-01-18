@@ -16,7 +16,7 @@ def thread_function( threadName, delay):
         i += 1
         if (i > 25):
             i = 20
-        dictionary = {'temperature':i}
+        dictionary = {'signal':i}
         # Serializing json
         json_object = json.dumps(dictionary, indent=1)
         # Writing to sample.json
@@ -28,13 +28,20 @@ def thread_function( threadName, delay):
 
 def checker_function( threadName, delay):
     print (f'Init {threadName}: {time.ctime(time.time())}')
+    lower_bound = 22
+    upper_bound = 30
     while 1:
         try:
             lock.acquire()
             with open('data.json', 'r') as openfile:
                 # Reading from json file
                 json_object = json.load(openfile)
-                print("current temperature: " + str(json_object['temperature']))
+                signal_value = json_object['signal']
+                print("measured signal: " + str(signal_value))
+                if signal_value > lower_bound and signal_value < upper_bound:
+                    print(f'{threadName}: {signal_value} WITHIN BOUNDS ✅')
+                else:
+                    print(f'{threadName}: {signal_value} OUT OF BOUNDS ⛔️')
             lock.release()
         except:
             print("cannot open data.json")
