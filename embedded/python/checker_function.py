@@ -1,6 +1,5 @@
 def checker_function( threadName, delay, lock):
-    import time
-    import json
+    import time, json
     print (f'Init {threadName}: {time.ctime(time.time())}')
     # Set signal boundaries here
     lower_bound = 22
