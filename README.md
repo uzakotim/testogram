@@ -4,7 +4,7 @@
 Tool for test-driven development in C++ and Python
 
 
-Version 1.0 
+Version 1.1
 -------------------------
 Usage:
 1) Download the repository
