@@ -5,7 +5,7 @@
 
 
 #*----------------------------------------------------------*
-from excuteTest import execute_tests
+from executeTest import execute_tests
 #*----------------------------------------------------------*
 def main():
     err = execute_tests()
