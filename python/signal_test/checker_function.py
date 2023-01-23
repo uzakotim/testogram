@@ -2,7 +2,7 @@ def checker_function( threadName, delay, lock):
     import time, json
     print (f'Init {threadName}: {time.ctime(time.time())}')
     # Set signal boundaries here
-    lower_bound = 22
+    lower_bound = 23
     upper_bound = 30
    
     while 1:
