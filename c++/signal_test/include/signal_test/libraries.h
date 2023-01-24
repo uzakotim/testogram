@@ -4,3 +4,11 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <stdlib.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <termios.h>
+#include <vector>
+#include <pthread.h>
+#include <atomic>

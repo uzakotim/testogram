@@ -2,12 +2,48 @@
 #include "../include/signal_test/json/json.h"
 
 std::mutex lock;
+std::atomic_bool stop_threads = false;
+
+void input_function(int id,std::string name,int delay)
+{   
+    lock.lock();
+    auto time = std::chrono::system_clock::now();
+    std::time_t now_time = std::chrono::system_clock::to_time_t(time);
+    std::cout<<"Init "<<name<<" function: "<<std::ctime(&now_time);
+    lock.unlock();
+    struct termios old_tio, new_tio;
+    unsigned char c;
+
+    /* get the terminal settings for stdin */
+    tcgetattr(STDIN_FILENO,&old_tio);
+    /* we want to keep the old setting to restore them a the end */
+    new_tio=old_tio;
+    /* disable canonical mode (buffered i/o) and local echo */
+    new_tio.c_lflag &=(~ICANON & ~ECHO);
+    /* set the new settings immediately */
+    tcsetattr(STDIN_FILENO,TCSANOW,&new_tio);
+    while(1)
+    {               
+        c=getchar();
+        if (c == 'q')
+            break;
+        std::cout<<c<<'\n';  
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    };
+    /* restore the former settings */
+    tcsetattr(STDIN_FILENO,TCSANOW,&old_tio);
+    stop_threads = true;
+    return;
+}
 
 void thread_function(int id,std::string name,int delay)
 {
+    lock.lock();
     auto time = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(time);
-    std::cout<<"Init "<<name<<" function: "<<std::ctime(&now_time)<<std::endl;
+    std::cout<<"Init "<<name<<" function: "<<std::ctime(&now_time);
+    lock.unlock();
+
     double i = 20;
     while(1)
     {
@@ -31,14 +67,19 @@ void thread_function(int id,std::string name,int delay)
         outputFileStream.close();
         lock.unlock();
         // --------------------------------
+        if (stop_threads)
+            return;
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
     }
 }
 void checker_function(int id,std::string name,int delay)
 {
+    lock.lock();
     auto time = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(time);
-    std::cout<<"Init "<<name<<" function: "<<std::ctime(&now_time)<<std::endl;
+    std::cout<<"Init "<<name<<" function: "<<std::ctime(&now_time);
+    lock.unlock();
+    
     double lower_bound = 23.0;
     double upper_bound = 30.0;
 
@@ -60,6 +101,8 @@ void checker_function(int id,std::string name,int delay)
         {
             std::cout<<"OUT OF BOUNDS ❌\n";
         }
+        if (stop_threads)
+            return;
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
     }
 }
@@ -70,7 +113,9 @@ int main(int argc, char** argv)
     std::cout<<"Press \"q\" to end testing"<<std::endl;
     std::thread th1(thread_function,1,"thread", 1000);
     std::thread ch1(checker_function,2,"checker",1000);
+    std::thread ip1(input_function,3,"input",10);
     th1.join();
     ch1.join();
+    ip1.join();
     return 0;
 }
