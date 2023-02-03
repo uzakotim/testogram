@@ -7,7 +7,7 @@ ip = ''
 port = '9656'
 stopThreads = False
 
-# Send json packet to server
+# send json packet to server
 def send_json_packet(sock, json_packet):
     sock.send(json.dumps(json_packet).encode())
 
@@ -21,19 +21,17 @@ def thread_function( threadName, delay):
     while 1:
         print(f'{threadName}: running')
         # ------------------------------------
-        # Temperature sensor simulation
-        # Replace with your signal processing code
+        # temperature sensor simulation
+        # replace with your signal processing code
         i += 1
         if (i > 25):
             i = 20
-        dictionary = {'signal':i}
-        
+        dictionary = {'signal':i} 
         # ------------------------------------
-
-        # Serializing json
+        # serializing json
         json_object = json.dumps(dictionary, indent=1)
         
-        # Writing to sample.json
+        # writing to sample.json
         lock.acquire()
         with open("data.json", "w") as outfile:
             outfile.write(json_object)
@@ -49,7 +47,7 @@ def thread_function( threadName, delay):
             pass
         if stopThreads:
             return
-        # Delay time
+        # delay time
         time.sleep(delay)
 
 
