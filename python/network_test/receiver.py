@@ -5,7 +5,9 @@ import socket
 
 stop_threads = False
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+ip = '172.16.176.137'
+ip2 = '172.16.231.194'
+ip = ip2
 
 # function to receive json packets from client
 def receive_json(conn):
@@ -49,7 +51,7 @@ def main():
     print('Press \"q\" to end testing')
     _thread.start_new_thread( thread_function,("thread", 1) )
 
-    sock.bind(('172.16.176.137', 8080))
+    sock.bind((ip, 8080))
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     print('socket is listening')
     sock.listen(1)
