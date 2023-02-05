@@ -49,7 +49,7 @@ def main():
     print('Press \"q\" to end testing')
     _thread.start_new_thread( thread_function,("thread", 1) )
 
-    sock.bind(('', 9656))
+    sock.bind(('172.16.176.137', 8080))
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     print('socket is listening')
     sock.listen(1)

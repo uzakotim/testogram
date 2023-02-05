@@ -4,6 +4,8 @@ import time,json
 import socket
 
 ip = '172.16.176.137'
+ip2 = '172.16.231.194'
+ip = ip2
 port = '8080'
 stopThreads = False
 
