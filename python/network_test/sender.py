@@ -3,8 +3,8 @@ from getch import getch
 import time,json
 import socket
 
-ip = ''
-port = '9656'
+ip = '172.16.176.137'
+port = '8080'
 stopThreads = False
 
 # send json packet to server
