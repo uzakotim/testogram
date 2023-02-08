@@ -38,6 +38,10 @@ void input_function(int id,std::string name,int delay)
 
 void thread_function(int id,std::string name,int delay)
 {
+    //* --------------------------------
+    // Sensor thread function
+    //* --------------------------------
+
     lock.lock();
     auto time = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(time);
@@ -74,6 +78,9 @@ void thread_function(int id,std::string name,int delay)
 }
 void checker_function(int id,std::string name,int delay)
 {
+    //* --------------------------------
+    // Signal test function
+    //* -------------------------------- 
     lock.lock();
     auto time = std::chrono::system_clock::now();
     std::time_t now_time = std::chrono::system_clock::to_time_t(time);
