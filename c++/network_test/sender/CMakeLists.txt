@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.0.2)
+project(SIGNAL_TEST VERSION 1.0.0)
+include_directories(include)
+add_executable(run_me src/main.cpp include/signal_test/libraries.h src/jsoncpp.cpp include/signal_test/json/json.h)
+target_compile_features(run_me PRIVATE cxx_std_17)
+TARGET_LINK_LIBRARIES( run_me pthread)

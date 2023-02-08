@@ -3,10 +3,10 @@ from getch import getch
 import time,json
 import socket
 
-ip = '172.16.176.137'
-ip2 = '172.16.231.194'
-ip = ip2
-port = '8080'
+# ip = '172.16.176.137'
+ip_to_send = '172.16.231.194'
+ip = ip_to_send
+port = 8080
 stopThreads = False
 
 # send json packet to server
@@ -33,7 +33,7 @@ def thread_function( threadName, delay):
         # serializing json
         json_object = json.dumps(dictionary, indent=1)
         
-        # writing to sample.json
+        # writing to data.json
         lock.acquire()
         with open("data.json", "w") as outfile:
             outfile.write(json_object)
