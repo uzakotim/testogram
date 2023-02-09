@@ -181,10 +181,13 @@ void thread_function(int id,std::string name,int delay)
             assert(str_header.compare(buf) == 0);
 
             //transfer to JSON
-            std::ifstream data_file(buf, std::ifstream::binary);
+            Json::Reader reader;
             Json::Value data;
-            data_file >> data;
-            data_file.close();
+            bool parsingSuccessful = reader.parse( buf, data );
+            if ( !parsingSuccessful )
+            {
+                std::cout << "Error parsing the string" << std::endl;
+            }
             // --------------------------------------------
             
             std::cout<<"Didn't get stuck here: 4"<< std::endl;

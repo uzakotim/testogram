@@ -59,7 +59,7 @@ void thread_function(int id,std::string name,int delay)
     
     while(1)
     {
-    // socket -----------------------------
+            // socket -----------------------------
         fd = socket(AF_INET, SOCK_STREAM, 0);
 
         if (fd < 0)
@@ -74,56 +74,57 @@ void thread_function(int id,std::string name,int delay)
             serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
             memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
         }
-
-        if (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
+        if (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr)) >= 0)
         {
-                printf("ERROR connecting to server\n");
+            // ------------------------------------
+            // temperature sensor simulation
+            // replace with your signal processing code
+                i += 1;
+                if (i > 25)
+                    i = 20;
+                Json::Value value_obj;
+                value_obj["signal"] = i;
+            // ------------------------------------ 
+            // writing to data.json
+            lock.lock();   
+            std::ofstream outputFileStream;
+            outputFileStream.open("../data.json");
+            if( !outputFileStream ) { // file couldn't be opened
+                std::cerr << "Error: file could not be opened" << std::endl;
+                exit(1);
+            }
+            outputFileStream << value_obj << std::endl;
+            outputFileStream.close();
+            lock.unlock();
+            // --------------------------------
+            // sending
+            char temp_buff[MAX_SIZE];
+            Json::FastWriter fastWriter;
+            std::string json_string = fastWriter.write(value_obj);
+            const char * message = json_string.c_str();
+            if (strcpy(temp_buff, message) == NULL)
+            {
+                perror("strcpy");
                 return;
-        }
-    // ------------------------------------
-    // temperature sensor simulation
-    // replace with your signal processing code
-        i += 1;
-        if (i > 25)
-            i = 20;
-        Json::Value value_obj;
-        value_obj["signal"] = i;
-    // ------------------------------------ 
-    // writing to data.json
-        lock.lock();   
-        std::ofstream outputFileStream;
-        outputFileStream.open("../data.json");
-        if( !outputFileStream ) { // file couldn't be opened
-            std::cerr << "Error: file could not be opened" << std::endl;
-            exit(1);
-        }
-        outputFileStream << value_obj << std::endl;
-        outputFileStream.close();
-        lock.unlock();
-    // --------------------------------
-    // sending
-        char temp_buff[MAX_SIZE];
-        Json::FastWriter fastWriter;
-        std::string json_string = fastWriter.write(value_obj);
-        const char * message = json_string.c_str();
-        if (strcpy(temp_buff, message) == NULL)
-        {
-            perror("strcpy");
-            return;
-        }
+            }
 
-        if (write(fd, temp_buff, strlen(temp_buff)) == -1)
-        {
-            perror("write");
-            return;
+            if (write(fd, temp_buff, strlen(temp_buff)) == -1)
+            {
+                perror("write");
+                return;
+            }
+
+            printf("Written data\n");
+
+            if (stop_threads)
+            {
+                close(fd);
+                return;
+            }
         }
-
-        printf("Written data\n");
-
-        if (stop_threads)
+        else
         {
-            close(fd);
-            return;
+            std::cout<<"server is not connected\n";
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
     }
