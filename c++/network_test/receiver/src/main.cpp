@@ -170,12 +170,6 @@ void thread_function(int id,std::string name,int delay)
             size_t pos = str.find("#");
             std::string str_header(str.substr(0, pos));
 
-            //parse header
-            if ((recv_size = recv(new_socket, buf, str_header.size() + 1, 0)) == -1)
-            {
-                std::cout << "recv error: " << strerror(errno) << std::endl;
-            }
-
             //sanity check
             buf[recv_size - 1] = '\0';
             assert(str_header.compare(buf) == 0);
