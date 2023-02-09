@@ -66,6 +66,7 @@ void thread_function(int id,std::string name,int delay)
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     int status = fcntl(server_fd, F_SETFL, fcntl(server_fd, F_GETFL, 0) | O_NONBLOCK);
     if (status == -1){
         perror("calling fcntl");

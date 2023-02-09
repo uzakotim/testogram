@@ -53,7 +53,7 @@ void thread_function(int id,std::string name,int delay)
     char* str;
     int fd = 0;
     struct sockaddr_in serverAddr;
-
+    int opt = 1;
     
     // ------------------------------------
     
@@ -61,7 +61,7 @@ void thread_function(int id,std::string name,int delay)
     {
             // socket -----------------------------
         fd = socket(AF_INET, SOCK_STREAM, 0);
-
+        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
         if (fd < 0)
         {
             printf("Error : Could not create socket\n");
