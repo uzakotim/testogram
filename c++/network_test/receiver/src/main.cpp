@@ -3,6 +3,7 @@
 #define PORT 8080
 #define N_CONNECTIONS 10
 #define MAX_CONNECTIONS 10
+#define MAX_SIZE 1024
 std::mutex lock;
 std::atomic_bool stop_threads = false;
 
@@ -56,7 +57,7 @@ void thread_function(int id,std::string name,int delay)
     int opt = 1;
     int addrlen = sizeof(address);
     int recv_size; // size in bytes received or -1 on error 
-    const int size_buf = 1024;
+    const int size_buf = MAX_SIZE;
     char buf[size_buf] = { 0 };
     
 
@@ -99,15 +100,10 @@ void thread_function(int id,std::string name,int delay)
     }
     all_connections[0] = server_fd;
 
-    std::cout<<"Didn't get stuck here: -2"<< std::endl;
-    std::cout<<"Didn't get stuck here: -1"<< std::endl;
     // --------------------------------
-
-
     while(1)
     {
         // connecting sockets -------------------------
-
         FD_ZERO(&rfds);
 
         for (int i=0;i < MAX_CONNECTIONS;i++) {
@@ -115,14 +111,12 @@ void thread_function(int id,std::string name,int delay)
                  FD_SET(all_connections[i], &rfds);
              }
         }
-        std::cout<<"Didn't get stuck here: 0"<< std::endl;
         /* Wait up to one second. */
 
         tv.tv_sec = 1;
         tv.tv_usec = 0;
 
         ret_val = select(FD_SETSIZE, &rfds, NULL, NULL,&tv);
-        std::cout<<ret_val<<std::endl;
         
         if (ret_val > 0)
         {
@@ -205,6 +199,10 @@ void thread_function(int id,std::string name,int delay)
             {
                 std::cout<<"OUT OF BOUNDS ❌\n";
             }
+        }
+        else 
+        {
+            std::cout<<"waiting for signal..."<<std::endl;
         }
 
         if (stop_threads){
