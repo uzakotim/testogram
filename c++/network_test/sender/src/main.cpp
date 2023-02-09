@@ -114,17 +114,18 @@ void thread_function(int id,std::string name,int delay)
                 return;
             }
 
-            printf("Written data\n");
+            printf("written data\n");
 
-            if (stop_threads)
-            {
-                close(fd);
-                return;
-            }
+           
         }
         else
         {
             std::cout<<"server is not connected\n";
+        } 
+        if (stop_threads)
+        {
+            close(fd);
+            return;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
     }

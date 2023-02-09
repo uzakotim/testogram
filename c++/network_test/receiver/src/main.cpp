@@ -51,7 +51,6 @@ void thread_function(int id,std::string name,int delay)
     double lower_bound = 23.0;
     double upper_bound = 30.0;
 
-    // socket -------------------------
     int server_fd, new_socket, valread;
     struct sockaddr_in address, new_addr;
     int opt = 1;
@@ -59,6 +58,13 @@ void thread_function(int id,std::string name,int delay)
     int recv_size; // size in bytes received or -1 on error 
     const int size_buf = MAX_SIZE;
     char buf[size_buf] = { 0 };
+    fd_set rfds;
+    int ret_val,new_fd;
+    struct timeval tv;
+    /* Wait up to one second. */
+    tv.tv_sec = 1;
+    tv.tv_usec = 0;
+    int all_connections[MAX_CONNECTIONS];
     
 
     // Creating socket file descriptor
@@ -71,9 +77,9 @@ void thread_function(int id,std::string name,int delay)
     if (status == -1){
         perror("calling fcntl");
     }
-    printf("Created a socket with fd: %d\n", server_fd);
+    // printf("Created a socket with fd: %d\n", server_fd);
+    
     /* Initialize the socket address structure */
-
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
@@ -91,11 +97,6 @@ void thread_function(int id,std::string name,int delay)
         exit(EXIT_FAILURE);
     }
 
-    fd_set rfds;
-    int ret_val,new_fd;
-    struct timeval tv;
-
-    int all_connections[MAX_CONNECTIONS];
     for (int i=0;i < MAX_CONNECTIONS;i++) {
         all_connections[i] = -1;
     }
@@ -106,17 +107,11 @@ void thread_function(int id,std::string name,int delay)
     {
         // connecting sockets -------------------------
         FD_ZERO(&rfds);
-
         for (int i=0;i < MAX_CONNECTIONS;i++) {
              if (all_connections[i] >= 0) {
                  FD_SET(all_connections[i], &rfds);
              }
         }
-        /* Wait up to one second. */
-
-        tv.tv_sec = 1;
-        tv.tv_usec = 0;
-
         ret_val = select(FD_SETSIZE, &rfds, NULL, NULL,&tv);
         
         if (ret_val > 0)
@@ -147,6 +142,7 @@ void thread_function(int id,std::string name,int delay)
                     /* read incoming data */   
                     //  printf("Returned fd is %d [index, i: %d]\n", all_connections[i], i);
                     ret_val = recv(all_connections[i], buf, size_buf, 0);
+                    recv_size = sizeof(buf);
                     if (ret_val == 0) {
                     //  printf("Closing connection for fd:%d\n", all_connections[i]);
                         close(all_connections[i]);
@@ -171,7 +167,7 @@ void thread_function(int id,std::string name,int delay)
             size_t pos = str.find("#");
             std::string str_header(str.substr(0, pos));
 
-            //sanity check
+            // sanity check
             buf[recv_size - 1] = '\0';
             assert(str_header.compare(buf) == 0);
 
@@ -183,6 +179,11 @@ void thread_function(int id,std::string name,int delay)
             {
                 std::cout << "Error parsing the string" << std::endl;
             }
+
+
+
+            // --------------------------------------------
+            // Signal processing
             // --------------------------------------------
             std::cout<<"Measured signal: "<<data["signal"]<<'\n';
             double signal_value = data["signal"].asDouble();
@@ -194,10 +195,11 @@ void thread_function(int id,std::string name,int delay)
             {
                 std::cout<<"OUT OF BOUNDS ❌\n";
             }
+            // --------------------------------------------
         }
         else 
         {
-            std::cout<<"Waiting for signal..."<<std::endl;
+            std::cout<<"waiting for signal"<<std::endl;
         }
 
         if (stop_threads){
@@ -206,6 +208,7 @@ void thread_function(int id,std::string name,int delay)
                     close(all_connections[i]);
                 }
             }
+            close(server_fd);
             return;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
