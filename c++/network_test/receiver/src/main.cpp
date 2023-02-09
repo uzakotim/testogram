@@ -184,10 +184,7 @@ void thread_function(int id,std::string name,int delay)
                 std::cout << "Error parsing the string" << std::endl;
             }
             // --------------------------------------------
-            
-            std::cout<<"Didn't get stuck here: 4"<< std::endl;
-            
-            std::cout<<"measured signal: "<<data["signal"]<<'\n';
+            std::cout<<"Measured signal: "<<data["signal"]<<'\n';
             double signal_value = data["signal"].asDouble();
             if((signal_value >= lower_bound) && (signal_value <= upper_bound))
             {
@@ -200,7 +197,7 @@ void thread_function(int id,std::string name,int delay)
         }
         else 
         {
-            std::cout<<"waiting for signal..."<<std::endl;
+            std::cout<<"Waiting for signal..."<<std::endl;
         }
 
         if (stop_threads){
