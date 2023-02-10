@@ -97,7 +97,16 @@ void thread_function(int id,std::string name,int delay)
         perror("socket failed");
         exit(EXIT_FAILURE);
     }
- 
+    // Set socket as non-blocking
+
+    // where socketfd is the socket you want to make non-blocking
+    int status = fcntl(server_fd, F_SETFL, fcntl(server_fd, F_GETFL, 0) | O_NONBLOCK);
+
+    if (status == -1){
+    perror("calling fcntl");
+    // handle the error.  By the way, I've never seen fcntl fail in this way
+    }
+
     // Forcefully attaching socket to the port 8080
     if (setsockopt(server_fd, SOL_SOCKET,
                    SO_REUSEADDR | SO_REUSEPORT, &opt,
@@ -120,34 +129,40 @@ void thread_function(int id,std::string name,int delay)
         perror("listen");
         exit(EXIT_FAILURE);
     }
+    
     while(1)
     {
+        std::cout << "receiver is running"<<std::endl;
+        
         if ((new_socket
             = accept(server_fd, (struct sockaddr*)&address,
                     (socklen_t*)&addrlen))
-            < 0) {
-            perror("accept");
-            exit(EXIT_FAILURE);
+            >= 0) {
+            // perror("accept");
+            // exit(EXIT_FAILURE);
+            // }
+            valread = read(new_socket, buffer, 1024);
+
+            // do stuff
+            std::cout<< "received message from address: "<< inet_ntoa(address.sin_addr)<<'\n';
+            process_signal(buffer,lower_bound,upper_bound,name);
+            // puts(buffer);
+
+            // (optional) send message
+            // send(new_socket, hello, strlen(hello), 0);
+        
+            // closing the connected socket
+            close(new_socket);
         }
-        valread = read(new_socket, buffer, 1024);
-
-        // do stuff
-        std::cout<< "received message from address: "<< inet_ntoa(address.sin_addr)<<'\n';
-        process_signal(buffer,lower_bound,upper_bound,name);
-        // puts(buffer);
-
-        // (optional) send message
-        // send(new_socket, hello, strlen(hello), 0);
-    
-        // closing the connected socket
-        close(new_socket);
         if (stop_threads)
         {
             shutdown(server_fd, SHUT_RDWR);
             break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+    
     }
+    return;
 }
 
 int main(int argc, char** argv)
