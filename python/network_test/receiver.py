@@ -6,7 +6,7 @@ import socket
 stop_threads = False
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #ip = '172.16.231.194'
-own_ip = '172.16.176.137'
+own_ip = ''
 ip = own_ip
 port = 8080
 

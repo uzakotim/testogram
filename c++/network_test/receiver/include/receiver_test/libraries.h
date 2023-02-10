@@ -22,3 +22,4 @@
 #include <cassert>
 #include <fcntl.h>
 #include <sys/select.h>
+#include <arpa/inet.h>

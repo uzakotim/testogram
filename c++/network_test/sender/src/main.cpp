@@ -59,6 +59,7 @@ void thread_function(int id,std::string name,int delay)
     
     while(1)
     {
+        std::cout<< name << ": running" << std::endl;
             // socket -----------------------------
         fd = socket(AF_INET, SOCK_STREAM, 0);
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
@@ -74,29 +75,30 @@ void thread_function(int id,std::string name,int delay)
             serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
             memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
         }
+        // ------------------------------------
+        // temperature sensor simulation
+        // replace with your signal processing code
+        i += 1;
+        if (i > 25)
+            i = 20;
+        Json::Value value_obj;
+        value_obj["signal"] = i;
+        // ------------------------------------ 
+        // writing to data.json
+        lock.lock();   
+        std::ofstream outputFileStream;
+        outputFileStream.open("../data.json");
+        if( !outputFileStream ) { // file couldn't be opened
+            std::cerr << "Error: file could not be opened" << std::endl;
+            exit(1);
+        }
+        outputFileStream << value_obj << std::endl;
+        outputFileStream.close();
+        lock.unlock();
+        // --------------------------------
         if (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr)) >= 0)
         {
-            // ------------------------------------
-            // temperature sensor simulation
-            // replace with your signal processing code
-                i += 1;
-                if (i > 25)
-                    i = 20;
-                Json::Value value_obj;
-                value_obj["signal"] = i;
-            // ------------------------------------ 
-            // writing to data.json
-            lock.lock();   
-            std::ofstream outputFileStream;
-            outputFileStream.open("../data.json");
-            if( !outputFileStream ) { // file couldn't be opened
-                std::cerr << "Error: file could not be opened" << std::endl;
-                exit(1);
-            }
-            outputFileStream << value_obj << std::endl;
-            outputFileStream.close();
-            lock.unlock();
-            // --------------------------------
+            
             // sending
             char temp_buff[MAX_SIZE];
             Json::FastWriter fastWriter;
@@ -107,12 +109,7 @@ void thread_function(int id,std::string name,int delay)
                 perror("strcpy");
                 return;
             }
-
-            if (write(fd, temp_buff, strlen(temp_buff)) == -1)
-            {
-                perror("write");
-                return;
-            }
+            send(fd, temp_buff, strlen(temp_buff), 0); 
 
             printf("written data\n");
 

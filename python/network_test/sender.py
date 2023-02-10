@@ -3,9 +3,9 @@ from getch import getch
 import time,json
 import socket
 
-# ip = '172.16.176.137'
-ip_to_send = '172.16.231.194'
-ip = ip_to_send
+ip = '172.16.176.137'
+# ip_to_send = '172.16.231.194'
+# ip = ip_to_send
 port = 8080
 stopThreads = False
 
@@ -45,7 +45,9 @@ def thread_function( threadName, delay):
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             send_json_packet(sock,json_object)        
             sock.close()
+            print("written data")
         except:
+            print("server is not connected")
             pass
         if stopThreads:
             return
