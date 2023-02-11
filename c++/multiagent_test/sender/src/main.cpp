@@ -6,6 +6,7 @@ std::atomic_bool stop_threads = false;
 #define PORT 8080
 #define IP_TO_SEND "127.0.0.1"
 #define MAX_SIZE 1024
+std::atomic_bool connected = false;
 
 void input_function(int id,std::string name,int delay)
 {   
@@ -54,27 +55,32 @@ void thread_function(int id,std::string name,int delay)
     int fd = 0;
     struct sockaddr_in serverAddr;
     int opt = 1;
+    char status_buff[MAX_SIZE];
     
     // ------------------------------------
-    
+    // socket -----------------------------
+    fd = socket(AF_INET, SOCK_STREAM, 0);
+    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if (fd < 0)
+    {
+        printf("Error : Could not create socket\n");
+        return;
+    }
+    else
+    {
+        serverAddr.sin_family = AF_INET;
+        serverAddr.sin_port = htons(PORT);
+        serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
+        memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
+    }
+    while (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr))<0)
+    {
+        puts("Waiting for connection");
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+    }
     while(1)
     {
         std::cout<< name << ": running" << std::endl;
-            // socket -----------------------------
-        fd = socket(AF_INET, SOCK_STREAM, 0);
-        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-        if (fd < 0)
-        {
-            printf("Error : Could not create socket\n");
-            return;
-        }
-        else
-        {
-            serverAddr.sin_family = AF_INET;
-            serverAddr.sin_port = htons(PORT);
-            serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
-            memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
-        }
         // ------------------------------------
         // temperature sensor simulation
         // replace with your signal processing code
@@ -96,29 +102,20 @@ void thread_function(int id,std::string name,int delay)
         outputFileStream.close();
         lock.unlock();
         // --------------------------------
-        if (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr)) >= 0)
+        
+        // sending
+        char temp_buff[MAX_SIZE];
+        Json::FastWriter fastWriter;
+        std::string json_string = fastWriter.write(value_obj);
+        const char * message = json_string.c_str();
+        if (strcpy(temp_buff, message) == NULL)
         {
-            
-            // sending
-            char temp_buff[MAX_SIZE];
-            Json::FastWriter fastWriter;
-            std::string json_string = fastWriter.write(value_obj);
-            const char * message = json_string.c_str();
-            if (strcpy(temp_buff, message) == NULL)
-            {
-                perror("strcpy");
-                return;
-            }
-            send(fd, temp_buff, strlen(temp_buff), 0); 
-
-            printf("written data\n");
-
-           
+            perror("strcpy");
+            return;
         }
-        else
-        {
-            std::cout<<"server is not connected\n";
-        } 
+        send(fd, temp_buff, strlen(temp_buff), 0);
+        printf("written data\n");
+        
         if (stop_threads)
         {
             close(fd);
