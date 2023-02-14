@@ -6,12 +6,10 @@
 #define MAX_SIZE 1024
 std::mutex lock;
 std::atomic_bool stop_threads = false;
-sem_t x, y;
-std::thread tid;
-std::thread readwriterthreads[100];
 #define LOWER_BOUND 23
 #define UPPER_BOUND 30
 int readercount = 0;
+int master_socket ,client_socket[30],max_clients = 30;
 
 //References:  GeekforGeeks.org 
 
@@ -45,6 +43,11 @@ void input_function(int id,std::string name,int delay)
     /* restore the former settings */
     tcsetattr(STDIN_FILENO,TCSANOW,&old_tio);
     stop_threads = true;
+    close(master_socket);
+    for (int i = 0; i <max_clients;i++)
+    {
+        close(client_socket[i]);
+    }
     return;
 }
 
@@ -118,8 +121,7 @@ void thread_function(int id,std::string name,int delay)
 
     // ----------------------------------------------------------------
     int opt = 1;  
-    int master_socket , addrlen , new_socket , client_socket[30] , 
-          max_clients = 30 , activity, i , valread , sd;  
+    int addrlen , new_socket , activity, i , valread , sd;  
     int max_sd;  
     struct sockaddr_in address;  
          
@@ -164,9 +166,6 @@ void thread_function(int id,std::string name,int delay)
         perror("bind failed");  
         exit(EXIT_FAILURE);  
     }  
-    printf("Listener on port %d \n", PORT);  
-         
-    
          
     //accept the incoming connection 
     addrlen = sizeof(address);  
@@ -174,6 +173,7 @@ void thread_function(int id,std::string name,int delay)
     // ----------------------------------------------------------------
     while(1)
     {
+        printf("Listener on port %d \n", PORT);  
         //try to specify maximum of 3 pending connections for the master socket 
         if (listen(master_socket, 3) < 0)  
         {  
@@ -201,11 +201,16 @@ void thread_function(int id,std::string name,int delay)
             if(sd > max_sd)  
                 max_sd = sd;  
         }  
-     
         //wait for an activity on one of the sockets , timeout is NULL , 
         //so wait indefinitely 
-        activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);  
-       
+        if ((activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL)<0 && (errno!=EINTR)) || stop_threads)
+        {
+            if (!stop_threads)
+                printf("select error\n");
+            else
+                printf("shutdown\n");
+        }          
+        
         if ((activity < 0) && (errno!=EINTR))  
         {  
             printf("select error");  
@@ -213,7 +218,7 @@ void thread_function(int id,std::string name,int delay)
              
         //If something happened on the master socket , 
         //then its an incoming connection 
-        if (FD_ISSET(master_socket, &readfds))  
+        if (FD_ISSET(master_socket, &readfds) && !stop_threads)  
         {  
             if ((new_socket = accept(master_socket, 
                     (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)  
@@ -279,8 +284,8 @@ void thread_function(int id,std::string name,int delay)
                     // buffer[valread] = '\0';
                     
                     //do stuff  
-                    // process_signal(buffer,LOWER_BOUND,UPPER_BOUND,inet_ntoa(address.sin_addr));
-                    puts(buffer);
+                    process_signal(buffer,LOWER_BOUND,UPPER_BOUND,inet_ntoa(address.sin_addr));
+                    // puts(buffer);
                 }  
             }  
         }
@@ -291,6 +296,7 @@ void thread_function(int id,std::string name,int delay)
                 close(client_socket[i]);
             }
             close(master_socket);
+            printf("shutdown\n");
             break;
         }
     }  
