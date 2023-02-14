@@ -166,12 +166,7 @@ void thread_function(int id,std::string name,int delay)
     }  
     printf("Listener on port %d \n", PORT);  
          
-    //try to specify maximum of 3 pending connections for the master socket 
-    if (listen(master_socket, 3) < 0)  
-    {  
-        perror("listen");  
-        exit(EXIT_FAILURE);  
-    }  
+    
          
     //accept the incoming connection 
     addrlen = sizeof(address);  
@@ -179,6 +174,12 @@ void thread_function(int id,std::string name,int delay)
     // ----------------------------------------------------------------
     while(1)
     {
+        //try to specify maximum of 3 pending connections for the master socket 
+        if (listen(master_socket, 3) < 0)  
+        {  
+            perror("listen");  
+            exit(EXIT_FAILURE);  
+        }  
         //clear the socket set 
         FD_ZERO(&readfds);  
      
