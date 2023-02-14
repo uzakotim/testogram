@@ -58,24 +58,33 @@ void thread_function(int id,std::string name,int delay)
     char status_buff[MAX_SIZE];
     
     // ------------------------------------
-    // socket -----------------------------
-    fd = socket(AF_INET, SOCK_STREAM, 0);
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-    if (fd < 0)
-    {
-        printf("Error : Could not create socket\n");
-        return;
-    }
-    else
-    {
-        serverAddr.sin_family = AF_INET;
-        serverAddr.sin_port = htons(PORT);
-        serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
-        memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
-    }
+   
+
     while (connect(fd, (const struct sockaddr *)&serverAddr, sizeof(serverAddr))<0)
     {
+
+        // socket -----------------------------
+        fd = socket(AF_INET, SOCK_STREAM, 0);
+        setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+        if (fd < 0)
+        {
+            printf("Error : Could not create socket\n");
+            return;
+        }
+        else
+        {
+            serverAddr.sin_family = AF_INET;
+            serverAddr.sin_port = htons(PORT);
+            serverAddr.sin_addr.s_addr = inet_addr(IP_TO_SEND);
+            memset(serverAddr.sin_zero, '\0', sizeof(serverAddr.sin_zero));
+        }
+
         puts("Waiting for connection");
+        if (stop_threads)
+        {
+            close(fd);
+            return;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(delay));
     }
     while(1)
