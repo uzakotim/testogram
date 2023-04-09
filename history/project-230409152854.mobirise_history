@@ -56,15 +56,17 @@
     "screenshot": "screenshot.png",
     "usedWebp": false,
     "favicon": "@PROJECT_PATH@/assets/images/reshot-icon-test-bhzwkyrqmu.svg",
-    "mbrsiteDomain": "yu5elf91ke",
+    "mbrsiteDomain": "syx1nevg20",
     "robotsSwitcher": false,
     "sitemapSwitcher": true,
     "sitemapSwitcherAuto": "on",
     "siteUrl": "http://testogram.eu",
+    "publishType": "local",
+    "publishPath": "file:///Users/uzakotim/websites/testogram",
     "robotsText": "User-agent: *\r\nDisallow: /cgi-bin\r\n",
     "cookiesAlert": false,
     "gdpr": false,
-    "google-analytics": "<!-- Google tag (gtag.js) -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-E0LMDM8JKJ\"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'G-E0LMDM8JKJ');\n</script>"
+    "google-analytics": ""
   },
   "pages": {
     "index.html": {
