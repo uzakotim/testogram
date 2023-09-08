@@ -1,7 +1,7 @@
 {
   "settings": {
     "name": "Testogram",
-    "currentPage": "download.html",
+    "currentPage": "index.html",
     "theme": {
       "name": "mobirise5",
       "title": "Mobirise 5",
@@ -50,7 +50,7 @@
         "url": "https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i"
       }
     ],
-    "uniqCompNum": 71,
+    "uniqCompNum": 70,
     "versionPublish": "5.8.0",
     "imageResize": true,
     "screenshot": "screenshot.png",
