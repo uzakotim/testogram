@@ -1,7 +1,7 @@
 {
   "settings": {
     "name": "Testogram",
-    "currentPage": "index.html",
+    "currentPage": "download.html",
     "theme": {
       "name": "mobirise5",
       "title": "Mobirise 5",
@@ -50,37 +50,20 @@
         "url": "https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900,100i,200i,300i,400i,500i,600i,700i,800i,900i"
       }
     ],
-    "uniqCompNum": 72,
+    "uniqCompNum": 71,
     "versionPublish": "5.8.0",
     "imageResize": true,
     "screenshot": "screenshot.png",
     "usedWebp": false,
     "favicon": "@PROJECT_PATH@/assets/images/reshot-icon-test-bhzwkyrqmu.svg",
-    "mbrsiteDomain": "ge5ljoiwx6",
+    "mbrsiteDomain": "yu5elf91ke",
     "robotsSwitcher": false,
     "sitemapSwitcher": true,
     "sitemapSwitcherAuto": "on",
     "siteUrl": "http://testogram.eu",
     "robotsText": "User-agent: *\r\nDisallow: /cgi-bin\r\n",
-    "cookiesAlert": {
-      "customDialogSelector": false,
-      "colorText": "#424a4d",
-      "colorBg": "#ffffff",
-      "colorButton": "#040d26",
-      "rejectColor": "#ffffff",
-      "colorLink": "#424a4d",
-      "underlineLink": true,
-      "opacityOverlay": "1",
-      "text": "We use cookies to give you the best experience. Read our <a href='privacy.html'>cookie policy</a>.",
-      "textButton": "GOT IT",
-      "rejectText": "REJECT"
-    },
-    "gdpr": {
-      "colorText": "#a7a7a7",
-      "colorLink": "#040d26",
-      "underlineLink": false,
-      "text": "By continuing you agree to our <a href='terms.html'>Terms of Service</a> and <a href='policy.html'>Privacy Policy</a>."
-    },
+    "cookiesAlert": false,
+    "gdpr": false,
     "google-analytics": "<!-- Google tag (gtag.js) -->\n<script async src=\"https://www.googletagmanager.com/gtag/js?id=G-E0LMDM8JKJ\"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n\n  gtag('config', 'G-E0LMDM8JKJ');\n</script>"
   },
   "pages": {
@@ -173,7 +156,7 @@
     "download.html": {
       "settings": {
         "title": "Download",
-        "order": "4",
+        "order": "3",
         "meta_descr": "Function tester for a general function development process using TDD approach"
       },
       "components": [
@@ -802,7 +785,7 @@
     "multi-threading.html": {
       "settings": {
         "title": "Multi-threading",
-        "order": "3",
+        "order": "2",
         "meta_descr": "A series of programs targeted for development of multi-threaded, real-time applications, using Python and C++",
         "socialSharingUrl": ""
       },
@@ -1278,7 +1261,7 @@
     "contact.html": {
       "settings": {
         "title": "Contact us",
-        "order": "2",
+        "order": "1",
         "meta_descr": "Timur Uzakov"
       },
       "components": [
